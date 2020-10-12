@@ -3,10 +3,11 @@ AWS lambda code by end of part 2 of programming alexa series
 """
 
 import random
-# import requests
-from modules import *
+import requests
 
-url = "https://508a8db3fe28.ngrok.io"
+# from modules import *
+
+url = "https://ee77e7d7b500.ngrok.io"
 
 ppt_title = ""
 ppt_slide_count = -1
@@ -145,13 +146,31 @@ def get_ppt_name(intent, session):
         "req": "create_ppt",
         "title": title
     }
-    requests.post(url=url, json=data)
 
-    speech_output = title + " is the title"
-    # speech_output = "Okay. How many slides does it have?"
-    reprompt_text = "I said " + title + " is the title"
+    success = False
+    try:
+        response = requests.post(url=url, json=data)
+        if response.status_code == 200:
+            success = True
+        elif response.status_code == 404:
+            success = False
+    except Exception as err:
+        print(f'Error occurred: {err}')
+        success = False
 
-    should_end_session = False
+    if success:
+        speech_output = "Created a presentation on " + title
+        reprompt_text = "I said presentation on " + title + "is created"
+        should_end_session = False
+    else:
+        speech_output = "Cannot create a presentation on " + title
+        # speech_output = "Okay. How many slides does it have?"
+        reprompt_text = "I said I was not able to create a presentation on " + title
+
+        should_end_session = False
+
+    # response = requests.post(url=url, json=data)
+
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -234,3 +253,6 @@ def lambda_handler(event, context):
         return on_intent(event['request'], event['session'])
     elif event['request']['type'] == "SessionEndedRequest":
         return on_session_ended(event['request'], event['session'])
+
+
+

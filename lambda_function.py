@@ -3,7 +3,8 @@ AWS lambda code by end of part 2 of programming alexa series
 """
 
 import random
-import requests
+# import requests
+from modules import *
 
 url = "https://508a8db3fe28.ngrok.io"
 

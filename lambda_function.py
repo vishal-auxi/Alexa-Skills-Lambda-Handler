@@ -148,9 +148,13 @@ def get_ppt_name(intent, session):
     }
 
     success = False
+    response = None
     try:
         response = requests.post(url=url, json=data)
         if response.status_code == 200:
+            print("****")
+            response = response.json()
+            print(response)
             success = True
         elif response.status_code == 404:
             success = False
@@ -159,13 +163,74 @@ def get_ppt_name(intent, session):
         success = False
 
     if success:
-        speech_output = "Created a presentation on " + title
-        reprompt_text = "I said presentation on " + title + "is created"
+        speech_output = "Created a presentation on " + response["title"]
+        reprompt_text = "I said presentation on " + response["title"] + " is created"
         should_end_session = False
     else:
         speech_output = "Cannot create a presentation on " + title
         # speech_output = "Okay. How many slides does it have?"
         reprompt_text = "I said I was not able to create a presentation on " + title
+
+        should_end_session = False
+
+    # response = requests.post(url=url, json=data)
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def create_ppt_count_response(intent, session):
+    session_attributes = {}
+    card_title = "PPTTitle"
+
+    subject = intent['slots']['subject']['value']
+    count = intent['slots']['count']['value']
+
+    if intent['confirmationStatus'] == "DENIED":
+        speech_output = "Did not create a presentation on" + subject
+        reprompt_text = "I said I did not create a presentation on " + subject
+        should_end_session = False
+        return build_response(session_attributes, build_speechlet_response(
+            card_title, speech_output, reprompt_text, should_end_session))
+
+    global ppt_title
+    ppt_title = subject
+
+    if int(count) > 0:
+        data = {
+            "req": "create_ppt_count",
+            "title": subject,
+            "count": int(count)
+        }
+    else:
+        data = {
+            "req": "create_ppt",
+            "title": subject
+        }
+
+    success = False
+    response = None
+    try:
+        response = requests.post(url=url, json=data)
+        if response.status_code == 200:
+            print("****")
+            response = response.json()
+            print(response)
+            success = True
+        elif response.status_code == 404:
+            success = False
+    except Exception as err:
+        print(f'Error occurred: {err}')
+        success = False
+
+    if success:
+        speech_output = "Created a presentation of " + str(response["count"]) + " slides on " + response["title"]
+        reprompt_text = "I said presentation of " + str(response["count"]) + " slides on " + response["title"] + " is created "
+        should_end_session = False
+    else:
+        speech_output = "Cannot create a presentation on " + subject
+        # speech_output = "Okay. How many slides does it have?"
+        reprompt_text = "I said I was not able to create a presentation on " + subject
 
         should_end_session = False
 
@@ -209,6 +274,8 @@ def on_intent(intent_request, session):
         return create_ppt_response()
     elif intent_name == "PPTNameIntent":
         return get_ppt_name(intent, session)
+    elif intent_name == "CreatePPTSubjectCountIntent":
+        return create_ppt_count_response(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
@@ -253,6 +320,3 @@ def lambda_handler(event, context):
         return on_intent(event['request'], event['session'])
     elif event['request']['type'] == "SessionEndedRequest":
         return on_session_ended(event['request'], event['session'])
-
-
-

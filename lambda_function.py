@@ -2,12 +2,11 @@
 AWS lambda code by end of part 2 of programming alexa series
 """
 
-import random
 import requests
 
 # from modules import *
 
-url = "https://ee77e7d7b500.ngrok.io"
+url = "https://9d966ac3f61a.ngrok.io"
 
 ppt_title = ""
 ppt_slide_count = -1
@@ -48,43 +47,6 @@ def build_response(session_attributes, speechlet_response):
 
 
 # --------------- Functions that control the skill's behavior ------------------
-def get_compliment_response():
-    """ An example of a custom intent. Same structure as welcome message, just make sure to add this intent
-    in your alexa skill in order for it to work.
-    """
-    session_attributes = {}
-    card_title = "Compliment"
-    compliments = [line for line in open('compliments.txt')]
-    print(compliments)
-    compliment = compliments[random.randint(0, len(compliments) - 1)]
-    speech_output = compliment
-    reprompt_text = "I said," + compliment
-    should_end_session = False
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-
-def get_insult_response(intent, session):
-    """ An example of a custom intent. Same structure as welcome message, just make sure to add this intent
-    in your alexa skill in order for it to work.
-    """
-    print("SESSION BELOW")
-    print(session)
-    session_attributes = {'insult_state': 1}
-    card_title = "Insult"
-    speech_output = "That's not very nice. I don't want to."
-    reprompt_text = "I would rather not do that."
-
-    if session.get('attributes', {}) and session['attributes']['insult_state'] == 1:
-        # insult = get_insult()
-        insult = "moron"
-        speech_output = intent['slots']['name']['value'] + " is a " + insult
-        reprompt_text = "I said he is a " + insult
-
-    should_end_session = False
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
 
 def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
@@ -122,19 +84,6 @@ def create_ppt_response():
 
 
 def get_ppt_name(intent, session):
-    # session_attributes = {'ppt_name_state': 1}
-    # card_title = "PPTTitle"
-    # speech_output = "That's not very nice. I don't want to."
-    # reprompt_text = "I would rather not do that."
-    #
-    # if session.get('attributes', {}) and session['attributes']['ppt_name_state'] == 1:
-    #     speech_output = intent['slots']['pptName']['value'] + " is the title"
-    #     reprompt_text = "I said " + intent['slots']['pptName']['value'] + " is the title"
-    #
-    # should_end_session = False
-    # return build_response(session_attributes, build_speechlet_response(
-    #     card_title, speech_output, reprompt_text, should_end_session))
-
     session_attributes = {}
     card_title = "PPTTitle"
 
@@ -152,9 +101,7 @@ def get_ppt_name(intent, session):
     try:
         response = requests.post(url=url, json=data)
         if response.status_code == 200:
-            print("****")
             response = response.json()
-            print(response)
             success = True
         elif response.status_code == 404:
             success = False
@@ -173,8 +120,6 @@ def get_ppt_name(intent, session):
 
         should_end_session = False
 
-    # response = requests.post(url=url, json=data)
-
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -185,6 +130,17 @@ def create_ppt_count_response(intent, session):
 
     subject = intent['slots']['subject']['value']
     count = intent['slots']['count']['value']
+
+    try:
+        source = intent['slots']['source']['value']
+        if source.lower() != "wikipedia" and source.lower() != "wiki":
+            speech_output = "Cannot create a presentation on " + subject + " using " + source + " as source"
+            reprompt_text = "I said I did not create a presentation on " + subject + " using " + source + " as source"
+            should_end_session = False
+            return build_response(session_attributes, build_speechlet_response(
+                card_title, speech_output, reprompt_text, should_end_session))
+    except Exception as e:
+        print("no source in create_ppt_count_response: " + e)
 
     if intent['confirmationStatus'] == "DENIED":
         speech_output = "Did not create a presentation on" + subject
@@ -213,9 +169,7 @@ def create_ppt_count_response(intent, session):
     try:
         response = requests.post(url=url, json=data)
         if response.status_code == 200:
-            print("****")
             response = response.json()
-            print(response)
             success = True
         elif response.status_code == 404:
             success = False
@@ -225,16 +179,112 @@ def create_ppt_count_response(intent, session):
 
     if success:
         speech_output = "Created a presentation of " + str(response["count"]) + " slides on " + response["title"]
-        reprompt_text = "I said presentation of " + str(response["count"]) + " slides on " + response["title"] + " is created "
+        reprompt_text = "I said presentation of " + str(response["count"]) + " slides on " + response[
+            "title"] + " is created "
         should_end_session = False
     else:
         speech_output = "Cannot create a presentation on " + subject
-        # speech_output = "Okay. How many slides does it have?"
         reprompt_text = "I said I was not able to create a presentation on " + subject
 
         should_end_session = False
 
-    # response = requests.post(url=url, json=data)
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def create_team_slide_response(intent, session):
+    session_attributes = {}
+    card_title = "TeamSlide"
+
+    data = {
+        "req": "create_team_slide",
+        "people": []
+    }
+
+    try:
+        if 'value' in intent['slots']['people']:
+            data["people"] = [intent['slots']['people']['value']]
+        else:
+            input_list = intent['slots']['people']['slotValue']['values']
+            people = [i["value"] for i in input_list]
+            data["people"] = people
+    except Exception as err:
+        print(f'Cannot access people: {err}')
+
+    response = requests.post(url=url, json=data)
+    response = response.json()
+    speech_output = response["message"]
+    reprompt_text = "I said " + speech_output
+    should_end_session = False
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def create_pie_chart_response(intent, session):
+    session_attributes = {}
+    card_title = "PieChart"
+
+    data = {
+        "req": "create_pie_chart",
+        "categories": [],
+        "percentages": []
+    }
+
+    try:
+        input_categories_list = intent['slots']['categories']['slotValue']['values']
+        data["categories"] = [i["value"] for i in input_categories_list]
+
+        input_percentages_list = intent['slots']['percentages']['slotValue']['values']
+        data["percentages"] = [i["value"] for i in input_percentages_list]
+    except Exception as err:
+        print(f'Cannot access people: {err}')
+
+    response = requests.post(url=url, json=data)
+    response = response.json()
+    speech_output = response["message"]
+    reprompt_text = "I said " + speech_output
+    should_end_session = False
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def create_chart_response(intent, session):
+    session_attributes = {}
+    card_title = "Chart"
+
+    data = {
+        "req": "create_pie_chart",
+        "categories": [],
+        "percentages": [],
+        "values": [],
+        "title": ""
+    }
+
+    try:
+        print("***")
+        s = intent['slots']
+        data["title"] = s['ChartTitle']['value']
+        data["categories"] = [s['FirstLabel']['value'], s['SecondLabel']['value'], s['ThirdLabel']['value']]
+
+        if "pie" in s['ChartType']['value'].lower():
+            data['req'] = "create_pie_chart"
+            data["percentages"] = [s['FirstValue']['value'], s['SecondValue']['value'], s['ThirdValue']['value']]
+        elif "bar" in s['ChartType']['value'].lower():
+            data['req'] = "create_bar_chart"
+            data["values"] = [s['FirstValue']['value'], s['SecondValue']['value'], s['ThirdValue']['value']]
+
+        response = requests.post(url=url, json=data)
+        response = response.json()
+        speech_output = response["message"]
+
+    except Exception as err:
+        print(f'Cannot access slots: {err}')
+        speech_output = "Couldn't create the chart due to an error in processing the input"
+
+    reprompt_text = "I said that I " + speech_output
+    should_end_session = False
 
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -266,16 +316,18 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "compliment":
-        return get_compliment_response()
-    elif intent_name == "insult":
-        return get_insult_response(intent, session)
-    elif intent_name == "CreatePPTIntent":
+    if intent_name == "CreatePPTIntent":
         return create_ppt_response()
     elif intent_name == "PPTNameIntent":
         return get_ppt_name(intent, session)
     elif intent_name == "CreatePPTSubjectCountIntent":
         return create_ppt_count_response(intent, session)
+    elif intent_name == "CreateTeamSlideIntent":
+        return create_team_slide_response(intent, session)
+    elif intent_name == "CreatePieChartIntent":
+        return create_pie_chart_response(intent, session)
+    elif intent_name == "CreateChartIntent":
+        return create_chart_response(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":

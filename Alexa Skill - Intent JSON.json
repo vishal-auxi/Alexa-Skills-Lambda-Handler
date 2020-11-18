@@ -1,0 +1,433 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "presentation bot",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "HelloWorldIntent",
+                    "slots": [],
+                    "samples": [
+                        "hello",
+                        "how are you",
+                        "say hi world",
+                        "say hi",
+                        "hi",
+                        "say hello world",
+                        "say hello"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "CreatePPTIntent",
+                    "slots": [],
+                    "samples": [
+                        "create a presentation",
+                        "create presentation",
+                        "create a ppt",
+                        "create ppt"
+                    ]
+                },
+                {
+                    "name": "PPTNameIntent",
+                    "slots": [
+                        {
+                            "name": "pptName",
+                            "type": "AMAZON.Book"
+                        }
+                    ],
+                    "samples": [
+                        "title is {pptName}",
+                        "PPT title is {pptName}",
+                        "PPT name is {pptName}",
+                        "Title of Presentation is {pptName}",
+                        "Name of Presentation is {pptName}",
+                        "Presentation title is {pptName}",
+                        "Presentation name is {pptName}"
+                    ]
+                },
+                {
+                    "name": "insult",
+                    "slots": [
+                        {
+                            "name": "name",
+                            "type": "AMAZON.FirstName"
+                        }
+                    ],
+                    "samples": [
+                        "insult {name}",
+                        "can you insult {name}"
+                    ]
+                },
+                {
+                    "name": "CreatePPTSubjectCountIntent",
+                    "slots": [
+                        {
+                            "name": "subject",
+                            "type": "AMAZON.Book"
+                        },
+                        {
+                            "name": "count",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "source",
+                            "type": "AMAZON.Corporation"
+                        }
+                    ],
+                    "samples": [
+                        "create a presentation of {count} slides on {subject} using {source}",
+                        "P.P.T on {subject} with {count} slides",
+                        "create a P.P.T on {subject} with {count} slides",
+                        "P.P.T with {count} slides on {subject}",
+                        "presentation on {subject} with {count} slides using {source}",
+                        "{subject} with {count} slides using {source}",
+                        "presentation with {count} slides on {subject} using {source}",
+                        "{count} slides on {subject} using {source}",
+                        "create a presentation on {subject} with {count} slides"
+                    ]
+                },
+                {
+                    "name": "CreateTeamSlideIntent",
+                    "slots": [
+                        {
+                            "name": "people",
+                            "type": "AMAZON.GB_FIRST_NAME",
+                            "multipleValues": {
+                                "enabled": true
+                            }
+                        }
+                    ],
+                    "samples": [
+                        "create a team slide with {people}",
+                        "build a team slide",
+                        "create a team slide"
+                    ]
+                },
+                {
+                    "name": "CreatePieChartIntent",
+                    "slots": [
+                        {
+                            "name": "categories",
+                            "type": "AMAZON.Country",
+                            "multipleValues": {
+                                "enabled": true
+                            }
+                        },
+                        {
+                            "name": "percentages",
+                            "type": "AMAZON.NUMBER",
+                            "multipleValues": {
+                                "enabled": true
+                            }
+                        }
+                    ],
+                    "samples": [
+                        "create a pie chart of {categories} whose values are {percentages}",
+                        "create a pie chart of {categories} with values of {percentages}",
+                        "create a pie chart with {categories} with values of {percentages} ",
+                        "create a pie chart with {categories} whose values are {percentages}",
+                        "create a pie chart with categories of {categories}  with values of {percentages}",
+                        "create a pie chart with categories of {categories}  with percentages of {percentages}",
+                        "create a pie chart with {categories} categories with {percentages} percentages",
+                        "build a pie chart slide",
+                        "build a pie chart",
+                        "create a pie chart slide",
+                        "create a pie chart"
+                    ]
+                },
+                {
+                    "name": "CreateChartIntent",
+                    "slots": [
+                        {
+                            "name": "ChartType",
+                            "type": "ChartType",
+                            "samples": [
+                                "{ChartType}"
+                            ]
+                        },
+                        {
+                            "name": "ChartTitle",
+                            "type": "AMAZON.Book",
+                            "samples": [
+                                "{ChartTitle}"
+                            ]
+                        },
+                        {
+                            "name": "FirstLabel",
+                            "type": "AMAZON.Book",
+                            "samples": [
+                                "{FirstLabel}"
+                            ]
+                        },
+                        {
+                            "name": "FirstValue",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{FirstValue}"
+                            ]
+                        },
+                        {
+                            "name": "SecondLabel",
+                            "type": "AMAZON.Book",
+                            "samples": [
+                                "{SecondLabel}"
+                            ]
+                        },
+                        {
+                            "name": "SecondValue",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{SecondValue}"
+                            ]
+                        },
+                        {
+                            "name": "ThirdLabel",
+                            "type": "AMAZON.Book",
+                            "samples": [
+                                "{ThirdLabel}"
+                            ]
+                        },
+                        {
+                            "name": "ThirdValue",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{ThirdValue}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "create a {ChartType} chart",
+                        "create a chart"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "ChartType",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "flow"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "line"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "pie"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "bar"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "CreateChartIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "ChartType",
+                            "type": "ChartType",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.989917464628.1562743268423"
+                            }
+                        },
+                        {
+                            "name": "ChartTitle",
+                            "type": "AMAZON.Book",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1354287749594.1415635080183"
+                            }
+                        },
+                        {
+                            "name": "FirstLabel",
+                            "type": "AMAZON.Book",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.209162874819.927745908987"
+                            }
+                        },
+                        {
+                            "name": "FirstValue",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.209162874819.1293981098607"
+                            }
+                        },
+                        {
+                            "name": "SecondLabel",
+                            "type": "AMAZON.Book",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.168267090543.628501530505"
+                            }
+                        },
+                        {
+                            "name": "SecondValue",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.168267090543.1124003388319"
+                            }
+                        },
+                        {
+                            "name": "ThirdLabel",
+                            "type": "AMAZON.Book",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.168267090543.1203244625081"
+                            }
+                        },
+                        {
+                            "name": "ThirdValue",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.168267090543.93315192594"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.989917464628.1562743268423",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the Chart Type?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.989917464628",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you want me to create a {ChartType} chart with {Labels} lables"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.989917464628.797033378998",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What are the labels for the chart?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.989917464628.797033378998",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Can you confirms the labels are {Labels}"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.209162874819.927745908987",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the first label?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.209162874819.1293981098607",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the value for {FirstLabel} ?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.168267090543.628501530505",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the second label?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.168267090543.1124003388319",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the value for {SecondLabel} ?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.168267090543.1203244625081",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the third label?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.168267090543.93315192594",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the value for {ThirdLabel} ?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1354287749594.1415635080183",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the title of the chart?"
+                    }
+                ]
+            }
+        ]
+    }
+}

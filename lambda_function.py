@@ -6,7 +6,7 @@ import requests
 
 # from modules import *
 
-url = "https://9d966ac3f61a.ngrok.io"
+url = ""
 
 ppt_title = ""
 ppt_slide_count = -1
@@ -290,6 +290,34 @@ def create_chart_response(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 
+def create_org_chart(intent, session):
+    session_attributes = {}
+    card_title = "OrgSlide"
+
+    data = {
+        "req": "create_org_chart",
+        "people": []
+    }
+
+    try:
+        first_level = intent['slots']['FirstLevel']['value']
+        second_level = intent['slots']['SecondLevel']['value']
+
+        data["people"] = [first_level.split(), second_level.split()]
+
+    except Exception as err:
+        print(f'Cannot access people: {err}')
+
+    response = requests.post(url=url, json=data)
+    response = response.json()
+    speech_output = response["message"]
+    reprompt_text = "I said " + speech_output
+    should_end_session = False
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
 # --------------- Events ------------------
 
 def on_session_started(session_started_request, session):
@@ -328,6 +356,8 @@ def on_intent(intent_request, session):
         return create_pie_chart_response(intent, session)
     elif intent_name == "CreateChartIntent":
         return create_chart_response(intent, session)
+    elif intent_name == "CreateOrgChartIntent":
+        return create_org_chart(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
